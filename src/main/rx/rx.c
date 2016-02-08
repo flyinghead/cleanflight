@@ -63,6 +63,8 @@ bool sumhInit(rxConfig_t *rxConfig, rxRuntimeConfig_t *rxRuntimeConfig, rcReadRa
 
 void rxMspInit(rxConfig_t *rxConfig, rxRuntimeConfig_t *rxRuntimeConfig, rcReadRawDataPtr *callback);
 
+void checkSpektrumRssiTimeout(void);
+
 const char rcChannelLetters[] = "AERT12345678abcdefgh";
 
 uint16_t rssi = 0;                  // range: [0;1023]
@@ -574,6 +576,8 @@ void updateRSSI(uint32_t currentTime)
         updateRSSIPWM();
     } else if (feature(FEATURE_RSSI_ADC)) {
         updateRSSIADC(currentTime);
+    } else {
+        checkSpektrumRssiTimeout();
     }
 }
 

@@ -122,6 +122,7 @@ void loop(void);
 void spektrumBind(rxConfig_t *rxConfig);
 const sonarHardware_t *sonarGetHardwareConfiguration(batteryConfig_t *batteryConfig);
 void sonarInit(const sonarHardware_t *sonarHardware);
+void spektrumRssiInit();
 
 #ifdef STM32F303xC
 // from system_stm32f30x.c
@@ -407,7 +408,9 @@ void init(void)
     failsafeInit(&masterConfig.rxConfig, masterConfig.flight3DConfig.deadband3d_throttle);
 
     rxInit(&masterConfig.rxConfig);
-
+    
+    spektrumRssiInit();
+    
 #ifdef GPS
     if (feature(FEATURE_GPS)) {
         gpsInit(

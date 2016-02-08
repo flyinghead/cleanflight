@@ -267,6 +267,7 @@ HIGHEND_SRC  = flight/autotune.c \
 		   io/gps.c \
 		   io/ledstrip.c \
 		   io/display.c \
+           io/spektrum_rssi.c \
 		   telemetry/telemetry.c \
 		   telemetry/frsky.c \
 		   telemetry/hott.c \
