@@ -83,6 +83,14 @@ static int32_t EstAlt;                // in cm
 
 #define DEGREES_80_IN_DECIDEGREES 800
 
+#ifdef SONAR_LVEZ
+#define BARO_TRANSITION_LOW 500
+#define BARO_TRANSITION_HIGH 600
+#else
+#define BARO_TRANSITION_LOW 200
+#define BARO_TRANSITION_HIGH 300
+#endif
+
 static void applyMultirotorAltHold(void)
 {
     static uint8_t isAltHoldChanged = 0;
@@ -265,13 +273,13 @@ void calculateEstimatedAltitude(uint32_t currentTime)
     sonarAlt = sonarCalculateAltitude(sonarAlt, tiltAngle);
 #endif
 
-    if (sonarAlt > 0 && sonarAlt < 200) {
+    if (sonarAlt > 0 && sonarAlt < BARO_TRANSITION_LOW) {
         baroAlt_offset = BaroAlt - sonarAlt;
         BaroAlt = sonarAlt;
     } else {
         BaroAlt -= baroAlt_offset;
         if (sonarAlt > 0) {
-            sonarTransition = (300 - sonarAlt) / 100.0f;
+            sonarTransition = (float)(BARO_TRANSITION_HIGH - sonarAlt) / (BARO_TRANSITION_HIGH - BARO_TRANSITION_LOW);
             BaroAlt = sonarAlt * sonarTransition + BaroAlt * (1.0f - sonarTransition);
         }
     }
@@ -305,7 +313,7 @@ void calculateEstimatedAltitude(uint32_t currentTime)
     }
 #endif
 
-    if (sonarAlt > 0 && sonarAlt < 200) {
+    if (sonarAlt > 0 && sonarAlt < BARO_TRANSITION_LOW) {
         // the sonar has the best range
         EstAlt = BaroAlt;
     } else {

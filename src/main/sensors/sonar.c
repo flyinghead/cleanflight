@@ -25,6 +25,7 @@
 #include "common/axis.h"
 
 #include "drivers/sonar_hcsr04.h"
+#include "drivers/sonar_lvez.h"
 #include "drivers/gpio.h"
 #include "config/runtime_config.h"
 #include "config/config.h"
@@ -98,14 +99,20 @@ const sonarHardware_t *sonarGetHardwareConfiguration(batteryConfig_t *batteryCon
 
 void sonarInit(const sonarHardware_t *sonarHardware)
 {
+#ifdef SONAR_LVEZ
+    lvez_init(sonarHardware);
+#else
     hcsr04_init(sonarHardware);
+#endif
     sensorsSet(SENSOR_SONAR);
     calculatedAltitude = -1;
 }
 
 void sonarUpdate(void)
 {
+#ifndef SONAR_LVEZ
     hcsr04_start_reading();
+#endif
 }
 
 /**
@@ -113,7 +120,11 @@ void sonarUpdate(void)
  */
 int32_t sonarRead(void)
 {
+#ifdef SONAR_LVEZ
+    return lvez_get_distance();
+#else
     return hcsr04_get_distance();
+#endif
 }
 
 /**
@@ -124,12 +135,14 @@ int32_t sonarRead(void)
  */
 int32_t sonarCalculateAltitude(int32_t sonarAlt, int16_t tiltAngle)
 {
-    // calculate sonar altitude only if the sonar is facing downwards(<25deg)
-    if (tiltAngle > 250)
+    // calculate sonar altitude only if the sonar is facing downwards(<30deg)
+    if (tiltAngle > 300)
         calculatedAltitude = -1;
     else
-        calculatedAltitude = sonarAlt * (900.0f - tiltAngle) / 900.0f;
-
+        //calculatedAltitude = sonarAlt * (900.0f - tiltAngle) / 900.0f;
+        // Cos(x) ~ 1 - x^2/2
+        calculatedAltitude = sonarAlt * (1 - (float)tiltAngle * tiltAngle / 10 / 10 * RAD * RAD / 2);
+    
     return calculatedAltitude;
 }
 

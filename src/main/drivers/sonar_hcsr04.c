@@ -23,14 +23,15 @@
 #include "system.h"
 #include "gpio.h"
 #include "nvic.h"
+#include "common/maths.h"
 
 #include "sonar_hcsr04.h"
 
-#ifdef SONAR
+#if defined(SONAR) && !defined(SONAR_LVEZ)
 
 /* HC-SR04 consists of ultrasonic transmitter, receiver, and control circuits.
  * When trigged it sends out a series of 40KHz ultrasonic pulses and receives
- * echo froman object. The distance between the unit and the object is calculated
+ * echo from an object. The distance between the unit and the object is calculated
  * by measuring the traveling time of sound and output it as the width of a TTL pulse.
  *
  * *** Warning: HC-SR04 operates at +5V ***
@@ -38,8 +39,14 @@
  */
 
 static uint32_t lastMeasurementAt;
-static volatile int32_t measurement = -1;
+//static volatile int32_t measurement = -1;
 static sonarHardware_t const *sonarHardware;
+
+#define NSAMPLES 3
+#define FILTER_LOW_LIMIT 80
+static int32_t measurements[NSAMPLES];
+static volatile int32_t nextMeasurementIdx = 0;
+static int32_t lastFilteredReading = -1;
 
 static void ECHO_EXTI_IRQHandler(void)
 {
@@ -51,7 +58,10 @@ static void ECHO_EXTI_IRQHandler(void)
     } else {
         timing_stop = micros();
         if (timing_stop > timing_start) {
-            measurement = timing_stop - timing_start;
+            //measurement = timing_stop - timing_start;
+            measurements[nextMeasurementIdx++] = timing_stop - timing_start;
+            if (nextMeasurementIdx >= NSAMPLES)
+                nextMeasurementIdx = 0;
         }
     }
 
@@ -129,6 +139,9 @@ void hcsr04_init(const sonarHardware_t *initialSonarHardware)
     NVIC_Init(&NVIC_InitStructure);
 
     lastMeasurementAt = millis() - 60; // force 1st measurement in hcsr04_get_distance()
+    
+    for (int i = 0; i < NSAMPLES; i++)
+        measurements[i] = 0;
 }
 
 // measurement reading is done asynchronously, using interrupt
@@ -156,6 +169,21 @@ void hcsr04_start_reading(void)
  */
 int32_t hcsr04_get_distance(void)
 {
+    int32_t measurement;
+    
+    if (lastFilteredReading < FILTER_LOW_LIMIT) {
+        int index = nextMeasurementIdx - 1;
+        
+        if (index < 0)
+            index = NSAMPLES - 1;
+        
+        measurement = measurements[index];
+        lastFilteredReading = measurement;
+    } else {
+        // Do a median filtering
+        measurement = quickMedianFilter3(measurements);
+        lastFilteredReading = measurement;
+    }
     // The speed of sound is 340 m/s or approx. 29 microseconds per centimeter.
     // The ping travels out and back, so to find the distance of the
     // object we take half of the distance traveled.

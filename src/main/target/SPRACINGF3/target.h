@@ -58,6 +58,8 @@
 #define USE_FLASHFS
 #define USE_FLASH_M25P16
 
+#define SONAR_LVEZ
+
 #define SONAR
 #define BEEPER
 #define LED0

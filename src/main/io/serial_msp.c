@@ -1086,7 +1086,7 @@ static bool processOutCommand(uint8_t cmdMSP)
         serialize32(lat);
         serialize32(lon);
         serialize32(AltHold);           // altitude (cm) will come here -- temporary implementation to test feature with apps
-        serialize16(0);                 // heading  will come here (deg)
+        serialize16(magHold);           // heading  will come here (deg) -- temporary Raph
         serialize16(0);                 // time to stay (ms) will come here
         serialize8(0);                  // nav flag will come here
         break;
