@@ -24,7 +24,6 @@
 #include "system.h"
 #include "gpio.h"
 #include "nvic.h"
-#include "common/maths.h"
 
 #include "sonar_hcsr04.h"
 
@@ -53,10 +52,7 @@ static void ECHO_EXTI_IRQHandler(void)
     } else {
         timing_stop = micros();
         if (timing_stop > timing_start) {
-            //measurement = timing_stop - timing_start;
-            measurements[nextMeasurementIdx++] = timing_stop - timing_start;
-            if (nextMeasurementIdx >= NSAMPLES)
-                nextMeasurementIdx = 0;
+            measurement = timing_stop - timing_start;
         }
     }
 
@@ -176,7 +172,7 @@ int32_t hcsr04_get_distance(void)
     //
     // 340 m/s = 0.034 cm/microsecond = 29.41176471 *2 = 58.82352941 rounded to 59
     int32_t distance = measurement / 59;
-    
+
     return distance;
 }
 #endif

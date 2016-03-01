@@ -85,14 +85,6 @@ static int32_t EstAlt;                // in cm
 
 #define DEGREES_80_IN_DECIDEGREES 800
 
-#ifdef SONAR_LVEZ
-#define BARO_TRANSITION_LOW 500
-#define BARO_TRANSITION_HIGH 600
-#else
-#define BARO_TRANSITION_LOW 200
-#define BARO_TRANSITION_HIGH 300
-#endif
-
 static void applyMultirotorAltHold(void)
 {
     static uint8_t isAltHoldChanged = 0;

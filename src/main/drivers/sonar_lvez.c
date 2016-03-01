@@ -6,18 +6,13 @@
 #include "system.h"
 #include "gpio.h"
 #include "nvic.h"
-#include "common/maths.h"
 
 #include "drivers/sonar_hcsr04.h"           // FIXME Copy sonarHardware_t or put it elsewhere
 
 #if defined(SONAR) && defined(SONAR_LVEZ)
 
-//static volatile int32_t measurement = -1;
+static volatile int32_t measurement = -1;
 static sonarHardware_t const *sonarHardware;
-
-#define NSAMPLES 3
-static int32_t measurements[NSAMPLES];
-static volatile int32_t nextMeasurementIdx = 0;
 
 static void ECHO_EXTI_IRQHandler(void)
 {
@@ -29,10 +24,7 @@ static void ECHO_EXTI_IRQHandler(void)
     } else {
         timing_stop = micros();
         if (timing_stop > timing_start) {
-            //measurement = timing_stop - timing_start;
-            measurements[nextMeasurementIdx++] = timing_stop - timing_start;
-            if (nextMeasurementIdx >= NSAMPLES)
-                nextMeasurementIdx = 0;
+            measurement = timing_stop - timing_start;
         }
     }
     
@@ -56,7 +48,7 @@ void EXTI9_5_IRQHandler(void)
 
 void lvez_init(const sonarHardware_t *initialSonarHardware, sonarRange_t *sonarRange)
 {
-    sonarRange->maxRangeCm = 500;
+    sonarRange->maxRangeCm = 600;
     sonarRange->detectionConeDeciDegrees = 300;
     sonarRange->detectionConeExtendedDeciDegrees = 450;
     
@@ -114,9 +106,6 @@ void lvez_init(const sonarHardware_t *initialSonarHardware, sonarRange_t *sonarR
  */
 int32_t lvez_get_distance(void)
 {
-    // Do a median filtering
-    int32_t measurement = quickMedianFilter3(measurements);
-
     // Maxbotix LV-EZ datasheet: "This pin outputs a pulse width representation of range. The distance can be calculated using the scale factor of
     // 147uS per inch."
     // So that's 58us per cm
