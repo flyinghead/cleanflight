@@ -54,8 +54,12 @@ void EXTI9_5_IRQHandler(void)
     ECHO_EXTI_IRQHandler();
 }
 
-void lvez_init(const sonarHardware_t *initialSonarHardware)
+void lvez_init(const sonarHardware_t *initialSonarHardware, sonarRange_t *sonarRange)
 {
+    sonarRange->maxRangeCm = 500;
+    sonarRange->detectionConeDeciDegrees = 300;
+    sonarRange->detectionConeExtendedDeciDegrees = 450;
+    
     gpio_config_t gpio;
     EXTI_InitTypeDef EXTIInit;
     
