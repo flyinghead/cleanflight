@@ -26,6 +26,7 @@
 #include "common/axis.h"
 
 #include "drivers/sonar_hcsr04.h"
+#include "drivers/sonar_lvez.h"
 #include "drivers/gpio.h"
 #include "config/runtime_config.h"
 #include "config/config.h"
@@ -139,7 +140,12 @@ void sonarInit(const sonarHardware_t *sonarHardware)
 {
     sonarRange_t sonarRange;
 
+#ifdef SONAR_LVEZ
+    lvez_init(sonarHardware, &sonarRange);
+#else
     hcsr04_init(sonarHardware, &sonarRange);
+#endif
+
     sensorsSet(SENSOR_SONAR);
     sonarMaxRangeCm = sonarRange.maxRangeCm;
     sonarCfAltCm = sonarMaxRangeCm / 2;
@@ -177,7 +183,9 @@ static int32_t applySonarMedianFilter(int32_t newSonarReading)
 
 void sonarUpdate(void)
 {
+#ifndef SONAR_LVEZ
     hcsr04_start_reading();
+#endif
 }
 
 /**
@@ -185,8 +193,13 @@ void sonarUpdate(void)
  */
 int32_t sonarRead(void)
 {
-    int32_t distance = hcsr04_get_distance();
-    if (distance > HCSR04_MAX_RANGE_CM)
+    int32_t distance =
+#ifdef SONAR_LVEZ
+        lvez_get_distance();
+#else
+        hcsr04_get_distance();
+#endif
+    if (distance > sonarMaxRangeCm)
         distance = SONAR_OUT_OF_RANGE;
 
     return applySonarMedianFilter(distance);
@@ -206,6 +219,7 @@ int32_t sonarCalculateAltitude(int32_t sonarDistance, float cosTiltAngle)
     else
         // altitude = distance * cos(tiltAngle), use approximation
         calculatedAltitude = sonarDistance * cosTiltAngle;
+
     return calculatedAltitude;
 }
 

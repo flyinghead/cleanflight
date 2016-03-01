@@ -36,7 +36,7 @@
  *
  */
 
-#if defined(SONAR)
+#if defined(SONAR) && !defined(SONAR_LVEZ)
 STATIC_UNIT_TESTED volatile int32_t measurement = -1;
 static uint32_t lastMeasurementAt;
 static sonarHardware_t const *sonarHardware;

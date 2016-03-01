@@ -40,6 +40,11 @@ typedef struct
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
+typedef struct
+{
+    void *test;
+} USART_TypeDef;
+
 typedef enum {TEST_IRQ = 0 } IRQn_Type;
 
 typedef struct {
@@ -54,4 +59,3 @@ void DMA_ClearFlag(uint32_t);
 #define WS2811_DMA_HANDLER_IDENTIFER 0
 
 #include "target.h"
-

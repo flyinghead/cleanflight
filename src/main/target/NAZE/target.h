@@ -116,6 +116,8 @@
 
 #define MAG_HMC5883_ALIGN CW180_DEG
 
+#define SONAR_LVEZ
+
 #define SONAR
 #define BEEPER
 #define LED0
@@ -153,17 +155,17 @@
 
 #define USE_ADC
 
-#define CURRENT_METER_ADC_GPIO      GPIOB
+#define CURRENT_METER_ADC_GPIO      GPIOA
 #define CURRENT_METER_ADC_GPIO_PIN  GPIO_Pin_1
-#define CURRENT_METER_ADC_CHANNEL   ADC_Channel_9
+#define CURRENT_METER_ADC_CHANNEL   ADC_Channel_1
 
 #define VBAT_ADC_GPIO               GPIOA
 #define VBAT_ADC_GPIO_PIN           GPIO_Pin_4
 #define VBAT_ADC_CHANNEL            ADC_Channel_4
 
-#define RSSI_ADC_GPIO               GPIOA
+#define RSSI_ADC_GPIO               GPIOB
 #define RSSI_ADC_GPIO_PIN           GPIO_Pin_1
-#define RSSI_ADC_CHANNEL            ADC_Channel_1
+#define RSSI_ADC_CHANNEL            ADC_Channel_9
 
 #define EXTERNAL1_ADC_GPIO          GPIOA
 #define EXTERNAL1_ADC_GPIO_PIN      GPIO_Pin_5

@@ -602,6 +602,30 @@ $(OBJECT_DIR)/alignsensor_unittest : \
 
 	$(CXX) $(CXX_FLAGS) $^ -o $(OBJECT_DIR)/$@
 
+$(OBJECT_DIR)/navgps_unittest.o : \
+    $(TEST_DIR)/navgps_unittest.cc \
+    $(GTEST_HEADERS)
+
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXX_FLAGS) $(TEST_CFLAGS) -c $(TEST_DIR)/navgps_unittest.cc -o $@
+
+$(OBJECT_DIR)/flight/navigation.o : \
+	$(USER_DIR)/flight/navigation.c \
+	$(USER_DIR)/flight/navigation.h \
+	$(GTEST_HEADERS)
+
+	@mkdir -p $(dir $@)
+	$(CC) $(C_FLAGS) $(TEST_CFLAGS) -UGPS_FILTERING -c $(USER_DIR)/flight/navigation.c -o $@
+
+$(OBJECT_DIR)/navgps_unittest : \
+    $(OBJECT_DIR)/common/maths.o \
+    $(OBJECT_DIR)/flight/navigation.o \
+    $(OBJECT_DIR)/flight/imu.o \
+    $(OBJECT_DIR)/navgps_unittest.o \
+    $(OBJECT_DIR)/gtest_main.a
+
+	$(CXX) $(CXX_FLAGS) $(TEST_CFLAGS) $^ -o $(OBJECT_DIR)/$@
+
 $(OBJECT_DIR)/version.o : \
 	$(USER_DIR)/version.c \
 	$(USER_DIR)/version.h \

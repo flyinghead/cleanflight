@@ -128,6 +128,7 @@ void ledStripInit(ledConfig_t *ledConfigsToUse, hsvColor_t *colorsToUse);
 void spektrumBind(rxConfig_t *rxConfig);
 const sonarHardware_t *sonarGetHardwareConfiguration(batteryConfig_t *batteryConfig);
 void sonarInit(const sonarHardware_t *sonarHardware);
+void spektrumRssiInit();
 void transponderInit(uint8_t* transponderCode);
 
 #ifdef STM32F303xC
@@ -506,6 +507,8 @@ void init(void)
     failsafeInit(&masterConfig.rxConfig, masterConfig.flight3DConfig.deadband3d_throttle);
 
     rxInit(&masterConfig.rxConfig, currentProfile->modeActivationConditions);
+
+    spektrumRssiInit();
 
 #ifdef GPS
     if (feature(FEATURE_GPS)) {
