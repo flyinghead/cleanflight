@@ -17,3 +17,15 @@ startup_stm32f10x_md_gcc.s
 docs/Manual.pdf
 README.pdf
 
+
+*.xcuserstate
+
+*.xcbkptlist
+
+cleanflight/cleanflight.xcodeproj/project.pbxproj
+
+cleanflight/cleanflight.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+
+cleanflight/cleanflight.xcodeproj/xcuserdata/raph.xcuserdatad/xcschemes/cleanflight.xcscheme
+
+cleanflight/cleanflight.xcodeproj/xcuserdata/raph.xcuserdatad/xcschemes/xcschememanagement.plist
