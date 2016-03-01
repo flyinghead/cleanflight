@@ -17,3 +17,11 @@ startup_stm32f10x_md_gcc.s
 docs/Manual.pdf
 README.pdf
 
+
+Cleanflight.xcworkspace/contents.xcworkspacedata
+
+Cleanflight.xcworkspace/xcuserdata/raph.xcuserdatad/UserInterfaceState.xcuserstate
+
+cleanflight/cleanflight.xcodeproj/project.xcworkspace/xcuserdata/raph.xcuserdatad/UserInterfaceState.xcuserstate
+
+cleanflight/cleanflight.xcodeproj/xcuserdata/raph.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
