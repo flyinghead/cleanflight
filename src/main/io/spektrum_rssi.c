@@ -40,7 +40,7 @@ void updateSpekRssi(volatile uint8_t *frame) {
     uint16_t frameLosses = (frame[2] << 8) + frame[3];
     uint16_t mainAntennaFades = (frame[4] << 8) + frame[5];
     //int satFades = spekFrame[6] * 256 + spekFrame[7];
-    rssi = constrain((rssi / 1023.0 * 0.9
+    rssi = constrain((rssi / 1023.0 * 0.85
                       + (1 - frameLosses + prevFrameLosses) * 0.1
                       + (1 - mainAntennaFades + prevMainAntennaFades) * 0.05) * 1023, 0, 1023);
     prevFrameLosses = frameLosses;
