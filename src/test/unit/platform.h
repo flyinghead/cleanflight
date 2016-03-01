@@ -46,3 +46,13 @@ typedef struct
 } TIM_TypeDef;
 
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
+
+typedef struct
+{
+    void *test;
+} DMA_Channel_TypeDef;
+
+typedef struct
+{
+    void *test;
+} USART_TypeDef;
